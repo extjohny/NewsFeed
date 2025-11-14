@@ -10,6 +10,7 @@ android {
     compileSdk = 36
 
     defaultConfig {
+        buildConfigField("String", "API_KEY", "17d1f4d1665f4a418bde43af69d7073a")
         applicationId = "ru.abdulkhalikov.newsfeed"
         minSdk = 24
         targetSdk = 36
