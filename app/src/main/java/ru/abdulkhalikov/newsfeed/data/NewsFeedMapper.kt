@@ -1,24 +1,33 @@
 package ru.abdulkhalikov.newsfeed.data
 
-import ru.abdulkhalikov.newsfeed.data.model.NewsResponse
+import ru.abdulkhalikov.newsfeed.data.model.NewsItemDto
 import ru.abdulkhalikov.newsfeed.domain.NewsItem
 
 class NewsFeedMapper {
 
-    fun mapResponseToNews(response: NewsResponse): List<NewsItem> {
+    fun mapResponseToNews(response: List<NewsItemDto>): List<NewsItem> {
         val result = mutableListOf<NewsItem>()
 
-        for (newsItemDto in response.news) {
+        for (newsItemDto in response) {
             result.add(
                 NewsItem(
+                    id = newsItemDto.id,
                     author = newsItemDto.author,
+                    avatarUrl = newsItemDto.avatarUrl,
                     text = newsItemDto.text,
-                    date = newsItemDto.date,
-                    imageUrl = newsItemDto.imageUrl
+                    publishedAt = newsItemDto.publishedAt,
+                    imageUrl = newsItemDto.imageUrl,
+                    likes = transformStatisticToInt(newsItemDto.likes),
+                    views = transformStatisticToInt(newsItemDto.views),
+                    shares = transformStatisticToInt(newsItemDto.shares)
                 )
             )
         }
 
         return result
+    }
+
+    private fun transformStatisticToInt(count: Float): Int {
+        return count.toInt()
     }
 }

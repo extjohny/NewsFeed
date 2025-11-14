@@ -5,14 +5,13 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class NewsItem(
+    val id: Int,
     val author: String,
+    val avatarUrl: String,
     val text: String,
-    val date: String,
-    val imageUrl: String?
-) : Parcelable {
-
-    val id: Int
-        get() = generateId()
-
-    private fun generateId(): Int = text.hashCode() + imageUrl.hashCode() + date.hashCode()
-}
+    val imageUrl: String,
+    val likes: Int,
+    val shares: Int,
+    val views: Int,
+    val publishedAt: String
+) : Parcelable
