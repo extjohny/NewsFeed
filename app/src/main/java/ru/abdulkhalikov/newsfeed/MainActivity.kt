@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import ru.abdulkhalikov.newsfeed.presentation.MainScreen
 import ru.abdulkhalikov.newsfeed.ui.theme.NewsFeedTheme
 
 class MainActivity : ComponentActivity() {
@@ -12,7 +13,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             NewsFeedTheme {
-
+                MainScreen()
             }
         }
     }
