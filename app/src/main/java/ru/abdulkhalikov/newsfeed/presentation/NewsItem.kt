@@ -90,6 +90,85 @@ private fun NewsItemText(
 }
 
 @Composable
+private fun NewsItemStatistics(
+    statistics: List<StatisticItem>,
+    actionOnCommentsClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Row(
+            modifier = Modifier
+                .weight(1f)
+        ) {
+            val viewsItem = statistics.getItemByType(StatisticType.VIEWS)
+            Statistics(
+                text = viewsItem.count.toString(),
+                iconResId = R.drawable.ic_views_count,
+                actionOnCommentsClick = actionOnCommentsClick,
+                viewsItem
+            )
+        }
+        Row(
+            modifier = Modifier
+                .weight(1f),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            val sharesItem = statistics.getItemByType(StatisticType.SHARES)
+            Statistics(
+                text = sharesItem.count.toString(),
+                iconResId = R.drawable.ic_share,
+                actionOnCommentsClick = actionOnCommentsClick,
+                sharesItem
+            )
+            val commentsItem = statistics.getItemByType(StatisticType.COMMENTS)
+            Statistics(
+                text = commentsItem.count.toString(),
+                iconResId = R.drawable.ic_comment,
+                actionOnCommentsClick = actionOnCommentsClick,
+                commentsItem
+            )
+            val likesItem = statistics.getItemByType(StatisticType.LIKES)
+            Statistics(
+                text = likesItem.count.toString(),
+                iconResId = R.drawable.ic_like,
+                actionOnCommentsClick = actionOnCommentsClick,
+                likesItem
+            )
+        }
+    }
+}
+
+@Composable
+private fun Statistics(
+    text: String,
+    iconResId: Int,
+    actionOnCommentsClick: () -> Unit,
+    statisticItem: StatisticItem
+) {
+    Row(
+        modifier = Modifier.clickable {
+            if (statisticItem.type == StatisticType.COMMENTS) actionOnCommentsClick()
+        },
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Image(
+            painter = painterResource(iconResId),
+            contentDescription = null,
+            contentScale = ContentScale.Fit
+        )
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(
+            text = text,
+            fontFamily = FontFamily.Default,
+            fontSize = 14.sp,
+            color = MaterialTheme.colorScheme.onBackground
+        )
+    }
+}
+
+@Composable
 private fun NewsItemImage(
     imageUrl: String?
 ) {
