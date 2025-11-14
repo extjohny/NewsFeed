@@ -1,12 +1,18 @@
 package ru.abdulkhalikov.newsfeed.presentation
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Card
@@ -16,11 +22,17 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
+import ru.abdulkhalikov.newsfeed.R
 import ru.abdulkhalikov.newsfeed.domain.NewsItem
+import ru.abdulkhalikov.newsfeed.domain.StatisticItem
+import ru.abdulkhalikov.newsfeed.domain.StatisticType
 
 @Composable
 fun NewsItem(
@@ -35,13 +47,15 @@ fun NewsItem(
         ) {
             NewsItemHeader(
                 author = newsItem.author,
-                publicationDate = newsItem.date
+                avatarUrl = newsItem.avatarUrl,
+                publicationDate = newsItem.publishedAt
             )
             Spacer(modifier = Modifier.height(8.dp))
             NewsItemText(contentText = newsItem.text)
             Spacer(modifier = Modifier.height(8.dp))
             NewsItemImage(imageUrl = newsItem.imageUrl)
             Spacer(modifier = Modifier.height(8.dp))
+            NewsItemStatistics(statistics = newsItem.statistics)
         }
     }
 }
@@ -49,12 +63,20 @@ fun NewsItem(
 @Composable
 private fun NewsItemHeader(
     author: String,
+    avatarUrl: String,
     publicationDate: String
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
+        AsyncImage(
+            modifier = Modifier
+                .size(50.dp)
+                .clip(CircleShape),
+            model = avatarUrl,
+            contentDescription = null
+        )
         Column(
             modifier = Modifier
                 .padding(start = 10.dp)
@@ -91,8 +113,7 @@ private fun NewsItemText(
 
 @Composable
 private fun NewsItemStatistics(
-    statistics: List<StatisticItem>,
-    actionOnCommentsClick: () -> Unit
+    statistics: List<StatisticItem>
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -105,9 +126,7 @@ private fun NewsItemStatistics(
             val viewsItem = statistics.getItemByType(StatisticType.VIEWS)
             Statistics(
                 text = viewsItem.count.toString(),
-                iconResId = R.drawable.ic_views_count,
-                actionOnCommentsClick = actionOnCommentsClick,
-                viewsItem
+                iconResId = R.drawable.ic_views_count
             )
         }
         Row(
@@ -118,23 +137,12 @@ private fun NewsItemStatistics(
             val sharesItem = statistics.getItemByType(StatisticType.SHARES)
             Statistics(
                 text = sharesItem.count.toString(),
-                iconResId = R.drawable.ic_share,
-                actionOnCommentsClick = actionOnCommentsClick,
-                sharesItem
-            )
-            val commentsItem = statistics.getItemByType(StatisticType.COMMENTS)
-            Statistics(
-                text = commentsItem.count.toString(),
-                iconResId = R.drawable.ic_comment,
-                actionOnCommentsClick = actionOnCommentsClick,
-                commentsItem
+                iconResId = R.drawable.ic_share
             )
             val likesItem = statistics.getItemByType(StatisticType.LIKES)
             Statistics(
                 text = likesItem.count.toString(),
-                iconResId = R.drawable.ic_like,
-                actionOnCommentsClick = actionOnCommentsClick,
-                likesItem
+                iconResId = R.drawable.ic_like
             )
         }
     }
@@ -143,13 +151,11 @@ private fun NewsItemStatistics(
 @Composable
 private fun Statistics(
     text: String,
-    iconResId: Int,
-    actionOnCommentsClick: () -> Unit,
-    statisticItem: StatisticItem
+    iconResId: Int
 ) {
     Row(
         modifier = Modifier.clickable {
-            if (statisticItem.type == StatisticType.COMMENTS) actionOnCommentsClick()
+
         },
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -175,9 +181,14 @@ private fun NewsItemImage(
     AsyncImage(
         modifier = Modifier
             .fillMaxWidth()
-            .size(200.dp),
+            .aspectRatio(4f / 3f),
+        contentScale = ContentScale.Crop,
         model = imageUrl,
         contentDescription = null,
-        contentScale = ContentScale.FillWidth
     )
+}
+
+private fun List<StatisticItem>.getItemByType(type: StatisticType): StatisticItem {
+    return this.find { it.type == type }
+        ?: throw IllegalStateException("Statistic item with type $type not found")
 }

@@ -10,7 +10,6 @@ android {
     compileSdk = 36
 
     defaultConfig {
-        buildConfigField("String", "API_KEY", "17d1f4d1665f4a418bde43af69d7073a")
         applicationId = "ru.abdulkhalikov.newsfeed"
         minSdk = 24
         targetSdk = 36
@@ -30,11 +29,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "1.8"
     }
     buildFeatures {
         compose = true

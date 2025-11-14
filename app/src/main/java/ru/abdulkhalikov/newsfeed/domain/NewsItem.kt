@@ -10,8 +10,6 @@ data class NewsItem(
     val avatarUrl: String,
     val text: String,
     val imageUrl: String,
-    val likes: Int,
-    val shares: Int,
-    val views: Int,
-    val publishedAt: String
+    val publishedAt: String,
+    val statistics: List<StatisticItem>
 ) : Parcelable

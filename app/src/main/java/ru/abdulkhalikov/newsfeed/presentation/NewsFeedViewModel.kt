@@ -1,8 +1,8 @@
 package ru.abdulkhalikov.newsfeed.presentation
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -20,10 +20,14 @@ class NewsFeedViewModel : ViewModel() {
         loadNewsFeed()
     }
 
-    private fun loadNewsFeed() {
-        viewModelScope.launch(Dispatchers.IO) {
-            repository.loadNews()
-            _screenState.value = NewsFeedState.Content(news = repository.news.value)
-        }
+    private fun loadNewsFeed() = viewModelScope.launch {
+        _screenState.value = NewsFeedState.Loading
+        repository.loadNews()
+        _screenState.value = NewsFeedState.Content(news = repository.news.value)
+    }
+
+    fun deleteNewsItem(id: Int) = viewModelScope.launch {
+        repository.deleteNewsItem(id.toString())
+        _screenState.value = NewsFeedState.Content(news = repository.news.value)
     }
 }

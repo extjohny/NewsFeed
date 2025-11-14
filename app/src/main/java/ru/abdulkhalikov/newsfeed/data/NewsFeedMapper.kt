@@ -2,6 +2,8 @@ package ru.abdulkhalikov.newsfeed.data
 
 import ru.abdulkhalikov.newsfeed.data.model.NewsItemDto
 import ru.abdulkhalikov.newsfeed.domain.NewsItem
+import ru.abdulkhalikov.newsfeed.domain.StatisticItem
+import ru.abdulkhalikov.newsfeed.domain.StatisticType
 
 class NewsFeedMapper {
 
@@ -11,7 +13,7 @@ class NewsFeedMapper {
         for (newsItemDto in response) {
             result.add(
                 NewsItem(
-                    id = newsItemDto.id,
+                    id = newsItemDto.id.toInt(),
                     author = newsItemDto.author,
                     avatarUrl = newsItemDto.avatarUrl,
                     text = newsItemDto.text,
@@ -34,11 +36,10 @@ class NewsFeedMapper {
                 )
             )
         }
-
         return result
     }
 
-    private fun transformStatisticToInt(count: Float): Int {
-        return count.toInt()
+    private fun transformStatisticToInt(count: String): Int {
+        return count.toFloat().toInt()
     }
 }
