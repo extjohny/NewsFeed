@@ -17,9 +17,20 @@ class NewsFeedMapper {
                     text = newsItemDto.text,
                     publishedAt = newsItemDto.publishedAt,
                     imageUrl = newsItemDto.imageUrl,
-                    likes = transformStatisticToInt(newsItemDto.likes),
-                    views = transformStatisticToInt(newsItemDto.views),
-                    shares = transformStatisticToInt(newsItemDto.shares)
+                    statistics = listOf(
+                        StatisticItem(
+                            type = StatisticType.VIEWS,
+                            count = transformStatisticToInt(newsItemDto.views)
+                        ),
+                        StatisticItem(
+                            type = StatisticType.LIKES,
+                            count = transformStatisticToInt(newsItemDto.likes)
+                        ),
+                        StatisticItem(
+                            type = StatisticType.SHARES,
+                            count = transformStatisticToInt(newsItemDto.shares)
+                        )
+                    )
                 )
             )
         }
