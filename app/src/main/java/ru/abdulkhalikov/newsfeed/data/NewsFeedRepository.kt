@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import retrofit2.HttpException
 import ru.abdulkhalikov.newsfeed.data.model.NewsItemDto
+import ru.abdulkhalikov.newsfeed.data.model.UpdateFavouriteStatusRequest
 import ru.abdulkhalikov.newsfeed.data.network.ApiFactory
 import ru.abdulkhalikov.newsfeed.domain.NewsItem
 
@@ -35,7 +36,52 @@ class NewsFeedRepository {
             cachedNews = oldNews
             _news.value = mapper.mapResponseToNews(oldNews)
         } catch (e: HttpException) {
-            e.stackTrace
+            e.stackTrace // mock api bug: item were deleted on server, but app crashes with 404
+        }
+    }
+
+    suspend fun updateFavouriteStatus(newsItemId: Int) {
+        val oldNewsItemDto = apiService.getNewsItem(newsItemId.toString())
+        if (oldNewsItemDto.isFavourite) {
+            val newNewsItemDto = apiService.updateLikes(
+                newsItemId = oldNewsItemDto.id,
+                updateLikesRequest = UpdateFavouriteStatusRequest(
+                    likes = (oldNewsItemDto.likes.toFloat().toInt() - 1).toString(),
+                    isFavourite = false
+                )
+            )
+            Log.d("TEST_TEST", "newNewsItemDto isFavorite = true $newNewsItemDto")
+            cachedNews = cachedNews.apply {
+                replaceAll {
+                    if (it.id == newNewsItemDto.id) {
+                        newNewsItemDto
+                    } else {
+                        it
+                    }
+                }
+            }
+            Log.d("TEST_TEST", "cachedNews isFavorite = true $cachedNews")
+            _news.value = mapper.mapResponseToNews(cachedNews)
+        } else {
+            val newNewsItemDto = apiService.updateLikes(
+                newsItemId = oldNewsItemDto.id,
+                updateLikesRequest = UpdateFavouriteStatusRequest(
+                    likes = (oldNewsItemDto.likes.toFloat().toInt() + 1).toString(),
+                    isFavourite = true
+                )
+            )
+            Log.d("TEST_TEST", "newNewsItemDto isFavorite = false $newNewsItemDto")
+            cachedNews = cachedNews.apply {
+                replaceAll {
+                    if (it.id == newNewsItemDto.id) {
+                        newNewsItemDto
+                    } else {
+                        it
+                    }
+                }
+            }
+            Log.d("TEST_TEST", "cachedNews isFavorite = false $cachedNews")
+            _news.value = mapper.mapResponseToNews(cachedNews)
         }
     }
 }

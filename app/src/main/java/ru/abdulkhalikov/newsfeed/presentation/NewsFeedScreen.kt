@@ -26,7 +26,8 @@ import ru.abdulkhalikov.newsfeed.domain.NewsItem
 
 @Composable
 fun NewsFeedScreen(
-    paddingValues: PaddingValues
+    paddingValues: PaddingValues,
+    actionOnCommentsClick: (NewsItem) -> Unit
 ) {
     val viewModel: NewsFeedViewModel = viewModel()
 
@@ -48,7 +49,11 @@ fun NewsFeedScreen(
                 news = currentState.news,
                 actionOnNewsItemSwiped = { newsItem ->
                     viewModel.deleteNewsItem(newsItem.id)
-                }
+                },
+                actionOnLikesClick = { newsItem ->
+                    viewModel.updateNewsItemFavouriteStatus(newsItem.id)
+                },
+                actionOnCommentsClick = actionOnCommentsClick
             )
         }
     }
@@ -69,7 +74,9 @@ private fun ProgressBar() {
 private fun NewsList(
     paddingValues: PaddingValues,
     news: List<NewsItem>,
-    actionOnNewsItemSwiped: (NewsItem) -> Unit
+    actionOnNewsItemSwiped: (NewsItem) -> Unit,
+    actionOnLikesClick: (NewsItem) -> Unit,
+    actionOnCommentsClick: (NewsItem) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier.padding(paddingValues)
@@ -96,7 +103,13 @@ private fun NewsList(
             ) {
                 NewsItem(
                     modifier = Modifier.padding(8.dp),
-                    newsItem = newsItem
+                    newsItem = newsItem,
+                    actionOnLikesClick = {
+                        actionOnLikesClick(newsItem)
+                    },
+                    actionOnCommentsClick = {
+                        actionOnCommentsClick(newsItem)
+                    }
                 )
             }
         }

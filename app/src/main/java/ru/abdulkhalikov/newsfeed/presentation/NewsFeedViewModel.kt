@@ -1,6 +1,5 @@
 package ru.abdulkhalikov.newsfeed.presentation
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,6 +22,11 @@ class NewsFeedViewModel : ViewModel() {
     private fun loadNewsFeed() = viewModelScope.launch {
         _screenState.value = NewsFeedState.Loading
         repository.loadNews()
+        _screenState.value = NewsFeedState.Content(news = repository.news.value)
+    }
+
+    fun updateNewsItemFavouriteStatus(newsItemId: Int) = viewModelScope.launch {
+        repository.updateFavouriteStatus(newsItemId)
         _screenState.value = NewsFeedState.Content(news = repository.news.value)
     }
 
